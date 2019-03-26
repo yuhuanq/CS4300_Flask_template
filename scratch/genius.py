@@ -16,7 +16,7 @@ import json
 
 BASE_URL = "https://api.genius.com"
 CLIENT_ACCESS_TOKEN = "bnT0xmyBXNVQSplx3fAwLtKiCPLQFmyctUIiL1BxKEWIkDvI0583WkiBxQbwRtpI"
-ARTIST_NAME = "21 Savage"
+ARTIST_NAMES = ["21 Savage", "Kendrick Lamar", "Lil Pump"]
 
 # send request and get response in json format.
 def _get(path, params=None, headers=None):
@@ -54,57 +54,94 @@ def get_artist_songs(artist_id):
 
 
 def get_song_information(song_ids):
-    song_list = {}
+    song_list = []
     for i, song_id in enumerate(song_ids):
         print('id:' + str(song_id) + ' start. ->')
 
         path = 'songs/{}'.format(song_id)
         data = _get(path=path)['response']['song']
-        song_list.update({
-        i: {
-            "title": data["title"],
-            "album": data["album"]["name"] if data["album"] else "<single>",
-            "release_date": data["release_date"] if data["release_date"] else "unidentified",
-            "featured_artists":
-                [feat["name"] if data["featured_artists"] else "" for feat in data["featured_artists"]],
-            "producer_artists":
-                [feat["name"] if data["producer_artists"] else "" for feat in data["producer_artists"]],
-            "writer_artists":
-                [feat["name"] if data["writer_artists"] else "" for feat in data["writer_artists"]],
-            "genius_track_id": song_id,
-            "genius_album_id": data["album"]["id"] if data["album"] else "none"}
-        })
+        song_list.append(data)
         print("-> id:" + str(song_id) + " is finished. \n")
     return song_list
 
-print("searching " + ARTIST_NAME + "'s artist id.")
+def get_referents(song_id):
+    print('id:' + str(song_id) + ' start referents. ->')
+
+    path = 'referents?song_id={}&text_format=plain&per_page=50'.format(song_id)
+    data = _get(path=path)['response']['referents']
+
+    referent_list = []
+
+    for i, referent in enumerate(data):
+        referent_list.append(
+        {
+            "lyric": referent["fragment"],
+            "url": referent["url"],
+            "annotations": [
+                {
+                    "verified": annotation['verified'],
+                    "votes_total": annotation['votes_total'],
+                    "annotation": annotation['body']['plain']
+                } for annotation in referent['annotations']
+            ]
+        }
+
+        )
+
+    print("-> id:" + str(song_id) + " referents is finished. \n")
+
+    return referent_list
+
+def get_referents_list(song_ids):
+    referents_list = []
+    for song_id in song_ids:
+        referents_list.append(
+            {
+            "song_id": song_id,
+            "referents": get_referents(song_id)
+            }
+        )
+
+    return referents_list
 
 
+def get_song_list(artist_list):
+    artist_id = None
+    song_ids = []
 
-artist_id = None
-search_resp = _get('search', {'q': ARTIST_NAME})
-for hit in search_resp['response']['hits']:
-   if hit["result"]["primary_artist"]["name"] == ARTIST_NAME:
-       artist_id = hit["result"]["primary_artist"]["id"]
-       break
+    for artist_name in ARTIST_NAMES:
+        print("getting song ids for artist {}".format(artist_name))
+        search_resp = _get('search', {'q': artist_name})
+        for hit in search_resp['response']['hits']:
+           if hit["result"]["primary_artist"]["name"] == artist_name:
+               artist_id = hit["result"]["primary_artist"]["id"]
+               break
 
-if not artist_id:
-    print("failed to search for artist id. terminating...")
-    exit(1)
+        if not artist_id:
+            print("failed to search for artist id")
+            continue
 
-print("getting song ids.")
-song_ids = get_artist_songs(artist_id)
+        song_ids_artist = get_artist_songs(artist_id)
+
+        song_ids.extend(song_ids_artist)
+
+    return song_ids
+
+song_ids = get_song_list(ARTIST_NAMES)
 
 print(song_ids)
 print('got song ids')
 print('getting meta data of each song')
 
 songs_lst = get_song_information(song_ids)
+referents_list = get_referents_list(song_ids)
 
 print("finished; dumping to json")
 
-with open('./' + ARTIST_NAME + '_songs.json', 'w') as fo:
+with open('./songs.json', 'w') as fo:
     fo.write(json.dumps(songs_lst))
 
+with open('./referents.json', 'w') as fo:
+    fo.write(json.dumps(referents_list))
 print('done')
 
