@@ -54,7 +54,7 @@ def get_artist_songs(artist_id):
 
 
 def get_song_information(song_ids):
-    song_list = []
+    song_dict = {}
     for i, song_id in enumerate(song_ids):
         print('id:' + str(song_id) + ' start. ->')
 
@@ -71,8 +71,6 @@ def get_song_information(song_ids):
         else:
             pageviews = -1
         song = {
-            song_id :
-                {
                  "accepted_annotations" : data["stats"]["accepted_annotations"],
                  "full_title" : data["full_title"],
                  "title" : data["title"],
@@ -89,11 +87,11 @@ def get_song_information(song_ids):
                  "writer_artists" : data["writer_artists"],
                  "referents" : referents
                  }
-        }
 
-        song_list.append(data)
+
+        song_dict[song_id] = song
         print("-> id:" + str(song_id) + " is finished. \n")
-    return song_list
+    return song_dict
 
 def get_referents(song_id):
     print('id:' + str(song_id) + ' start referents. ->')
