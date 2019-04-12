@@ -106,11 +106,13 @@ def get_referents(song_id):
         {
             "lyric": referent["fragment"],
             "url": referent["url"],
+            "id": referent["id"],
             "annotations": [
                 {
                     "verified": annotation['verified'],
                     "votes_total": annotation['votes_total'],
-                    "annotation": annotation['body']['plain']
+                    "annotation": annotation['body']['plain'],
+                    "id": annotation['id']
                 } for annotation in referent['annotations']
             ]
         }
