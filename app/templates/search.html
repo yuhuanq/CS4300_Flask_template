@@ -3,26 +3,37 @@
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
     </head>
+
+
     <body>
-        <div class="topcorner">
-            <p>Project Name: {{ name }}</p>
-            <p>Student Name: ({{ netid }})</p>
+        <!-- <div class="topcorner"> -->
+        <!--     <p>Project Name: {{ name }}</p> -->
+        <!--     <p>Student Name: ({{ netid }})</p> -->
+        <!-- </div> -->
+
+        <div class="git-container">
+          <a href="https://github.com/yuhuanq/cs4300sp2019-sonotype" target="_blank" class="git-link">
+            <span class="git-text">Visit us on Github</span>
+            <img class="git-img" src="/static/github.png" img="github" />
+          </a>
         </div>
 
         <form class="form-inline global-search">
-            <h1 style="font-size: 55px; font-family:Futura; color: #4285F4">
-                C
-                <font color=#EA4335>S</font>
-                <font color=#FBBC05>4</font>
-                3
-                <font color=#34A853>0</font>
-                <font color=#EA4335>0</font>
+            <h1 style="font-size: 55px; font-family:Futura; color: #191414">
+                S
+                <font color=#1db954>O</font>
+                N
+                <font color=#1db954>O</font>
+                T
+                <font color=#1db954>Y</font>
+                P
+                <font color=#1db954>E</font>
             </h1>
 
             <br><br>
 
             <div class="form-group">
-                <input id="input" type="text" name="search" class="form-control" placeholder="Your Input">
+                <input id="input" type="text" name="search" class="form-control" placeholder="Songs about [topic]">
             </div>
             <button type="submit" class="btn btn-info"> Go! </button>
         </form>
