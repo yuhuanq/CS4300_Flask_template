@@ -95,9 +95,10 @@ def find_most_similar(query,n_results):
         song_id = annotation_to_song[_id]
         data = {} #data object contains the below fields
         data["id"] = _id
-        data["song"] = song_to_name[annotation_to_song[_id]]
+        data["song"] = all_songs[song_id]["title"]
         data["annotation"] = annotation_to_text[_id]
         data["lyric"] = annotation_to_fragment[_id]
+        data["artist"] = all_songs[song_id]["artists_names"]
         data["image"] = all_songs[song_id]["header_image_url"]
         if not all_songs[song_id]["album"] == None:
             data["album"] = all_songs[song_id]["album"]["full_title"]
@@ -111,14 +112,15 @@ def find_most_similar(query,n_results):
 
 @irsystem.route('/', methods=['GET'])
 def search():
-	query = request.args.get('search')
-	if not query:
-		data = []
-		output_message = ''
-	else:
-		output_message = "Your search: " + query
-		data = find_most_similar(query, 10)
-	return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
+  print(annotation_to_song)
+  query = request.args.get('search')
+  if not query:
+    data = []
+    output_message = ''
+  else:
+    output_message = "Your search: " + query
+    data = find_most_similar(query, 10)
+  return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
 
 
 
