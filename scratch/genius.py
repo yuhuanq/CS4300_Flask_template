@@ -16,7 +16,7 @@ import json
 
 BASE_URL = "https://api.genius.com"
 CLIENT_ACCESS_TOKEN = "bnT0xmyBXNVQSplx3fAwLtKiCPLQFmyctUIiL1BxKEWIkDvI0583WkiBxQbwRtpI"
-ARTIST_NAMES = ["21 Savage", "Kendrick Lamar", "Lil Pump"]
+ARTIST_NAMES = ["Kendrick Lamar"]
 
 # send request and get response in json format.
 def _get(path, params=None, headers=None):
@@ -54,15 +54,44 @@ def get_artist_songs(artist_id):
 
 
 def get_song_information(song_ids):
-    song_list = []
+    song_dict = {}
     for i, song_id in enumerate(song_ids):
         print('id:' + str(song_id) + ' start. ->')
 
-        path = 'songs/{}'.format(song_id)
+        path = 'songs/{}?text_format=plain'.format(song_id)
         data = _get(path=path)['response']['song']
-        song_list.append(data)
+
+        song_id = data["id"]
+        referents = get_referents(song_id)
+        print(song_id)
+
+        pageviews = 0
+        if "pageviews" in data["stats"]:
+            pageviews =  data["stats"]["pageviews"]
+        else:
+            pageviews = -1
+        song = {
+                 "accepted_annotations" : data["stats"]["accepted_annotations"],
+                 "full_title" : data["full_title"],
+                 "title" : data["title"],
+                 "description" : data["description"]["plain"],
+                 "header_image_url" : data["header_image_url"],
+                 "song_art_image_url" : data["song_art_image_url"],
+                 "pyongs_count" : data["pyongs_count"],
+                 "release_date" : data["release_date"],
+                 "hot" : data["stats"]["hot"],
+                 "page_views" : pageviews,
+                 "artists_names" : data["primary_artist"]["name"],
+                 "album" : data["album"],
+                 "producer_artists" : data["producer_artists"],
+                 "writer_artists" : data["writer_artists"],
+                 "referents" : referents
+                 }
+
+
+        song_dict[song_id] = song
         print("-> id:" + str(song_id) + " is finished. \n")
-    return song_list
+    return song_dict
 
 def get_referents(song_id):
     print('id:' + str(song_id) + ' start referents. ->')
@@ -77,11 +106,13 @@ def get_referents(song_id):
         {
             "lyric": referent["fragment"],
             "url": referent["url"],
+            "id": referent["id"],
             "annotations": [
                 {
                     "verified": annotation['verified'],
                     "votes_total": annotation['votes_total'],
-                    "annotation": annotation['body']['plain']
+                    "annotation": annotation['body']['plain'],
+                    "id": annotation['id']
                 } for annotation in referent['annotations']
             ]
         }
@@ -134,14 +165,14 @@ print('got song ids')
 print('getting meta data of each song')
 
 songs_lst = get_song_information(song_ids)
-referents_list = get_referents_list(song_ids)
+#referents_list = get_referents_list(song_ids)
 
 print("finished; dumping to json")
 
 with open('./songs.json', 'w') as fo:
     fo.write(json.dumps(songs_lst))
 
-with open('./referents.json', 'w') as fo:
-    fo.write(json.dumps(referents_list))
-print('done')
+# with open('./referents.json', 'w') as fo:
+#     fo.write(json.dumps(referents_list))
+# print('done')
 
