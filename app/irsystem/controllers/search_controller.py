@@ -58,7 +58,7 @@ def create_dictionarys(json_file="songs.json", annotation_to_song={}, song_to_na
 
 annotation_to_song,song_to_name,annotation_to_text,annotation_to_fragment = create_dictionarys()
 # vectorizer = TfidfVectorizer(max_features =  5000,
-vectorizer = TfidfVectorizer(max_features = 5000,
+vectorizer = TfidfVectorizer(max_features = 10000,
                            stop_words = "english",
                            # max_df = 0.8, min_df = 10,
                            # max_df = 1, min_df = 0,
