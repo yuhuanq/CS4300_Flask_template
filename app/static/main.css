@@ -1,38 +1,78 @@
 @media (min-width: 1200px) {
-.container {
+  .container {
     max-width: 970px;
-}
+  }
 }
 @media (min-width:400px){
-.global-search {
-padding: 20px 0;
-text-align:center;
-}
-body {
-padding-top: 15%;
-padding-bottom: 15px;
-}
-.global-search {
-text-align:center;
-padding:10px;
-}
-.global-search .form-control {
-width:500px;
-}
-.global-search * {
-display:inline-block;
-margin-bottom:0;
-}
+  .global-search {
+    padding: 20px 0;
+    text-align:center;
+  }
+  body {
+    padding-top: 15%;
+    padding-bottom: 15px;
+  }
+  .global-search {
+    text-align:center;
+    padding:10px;
+  }
+  .global-search .form-control {
+    width:500px;
+  }
+  .global-search * {
+    display:inline-block;
+    margin-bottom:0;
+  }
 }
 .topcorner{
-position:absolute;
-top:2%;
-right:2%;
+  position:absolute;
+  top:2%;
+  right:2%;
 }
 .btn{
-background-color: #4285F4;
-border: none
+  background-color: #1db954;
+  border: none
 }
 .step-links a{
-color: #4285F4;
+  color: #4285F4;
+}
+
+
+.git-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.git-img {
+  width: 40px;
+  -webkit-transition: -webkit-transform .8s ease-in-out;
+          transition:         transform .8s ease-in-out;
+}
+
+.git-container:hover .git-img {
+  -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+}
+
+.git-text {
+  opacity: 0;
+  line-height: 40px;
+  float: left;
+  padding-right: 10px;
+  display: inline-block;
+  -webkit-transition: opacity .2s linear;
+          transition: opacity .2s linear;
+}
+
+a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:hover {
+  color: #52616a;
+}
+
+.git-container:hover .git-text {
+  opacity: 1;
+  -webkit-transition: opacity .2s linear;
+          transition: opacity .2s linear;
 }
