@@ -111,12 +111,10 @@ def find_most_similar(query,n_results):
         if data['similarity'] :
             output_array.append(data)
 
-    print("Finished finding similar annotations for query: {}".format(query))
     return output_array
 
 @irsystem.route('/', methods=['GET'])
 def search():
-  print(annotation_to_song)
   query = request.args.get('search')
   if not query:
     data = []
