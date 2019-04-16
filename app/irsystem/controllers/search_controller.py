@@ -57,9 +57,11 @@ def create_dictionarys(json_file="songs.json", annotation_to_song={}, song_to_na
     return (annotation_to_song,song_to_name,annotation_to_text,annotation_to_fragment)
 
 annotation_to_song,song_to_name,annotation_to_text,annotation_to_fragment = create_dictionarys()
-vectorizer = TfidfVectorizer(max_features =  5000,
+# vectorizer = TfidfVectorizer(max_features =  5000,
+vectorizer = TfidfVectorizer(max_features = 1000000,
                            stop_words = "english",
-                           max_df = 0.8, min_df = 10,
+                           # max_df = 0.8, min_df = 10,
+                           # max_df = 1, min_df = 0,
                           norm = 'l2')
 tf_idf = vectorizer.fit_transform(list(annotation_to_text.values())).toarray()
 index_to_annotation = {i:v for i, v in enumerate(vectorizer.get_feature_names())}
@@ -105,7 +107,9 @@ def find_most_similar(query,n_results):
         else:
             data["album"] = "No album found"
         data["similarity"] = sim_scores[-i]
-        output_array.append(data)
+        data['release_date'] = all_songs[song_id]['release_date']
+        if data['similarity'] :
+            output_array.append(data)
 
     print("Finished finding similar annotations for query: {}".format(query))
     return output_array
@@ -119,7 +123,7 @@ def search():
     output_message = ''
   else:
     output_message = "Your search: " + query
-    data = find_most_similar(query, 10)
+    data = find_most_similar(query, 50)
   return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
 
 

@@ -46,29 +46,38 @@
         {% if data %}
             <h1>{{output_message}}</h1>
             {% for d in data|batch(3) %}
-                <br>
                 <div class="row">
-                {% for song in d%}
-                  <!-- <p>{{song}}</p> -->
-                    <div class="col-sm-6 col-md-4">
-                      <div class="thumbnail">
-                        <img src="static/placeholder.svg" alt="..." height="243" width="200">
-                        <div class="caption">
-                          <h3>Thumbnail label</h3>
-                          <p> Cras justo odio, dapibus ac facilisis in, egestas
-                            eget quam. Donec id elit non mi porta gravida at
-                            eget metus. Nullam id dolor id nibh ultricies
-                            vehicula ut id elit.
-                          </p>
-                          <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                  {% for song in d%}
+                    <!-- <p>{{song}}</p> -->
+                      <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                          <img src={{song['image']}} alt="..." height="243" width="200">
+                          <div class="caption">
+                            <h3>{{song['song']}}</h3>
+                            <p>
+                              Release date: {{song['release_date']}}
+                              </br>
+                              score: {{song['similarity']}}
+                              </br>
+                              </br>
+                              {{song['lyric']}}
+                              </br>
+                              </br>
+                              {{song['annotation']}}
+                            </p>
+                            <!-- <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p> -->
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                {% endfor %}
+                  {% endfor %}
                 </div>
             {% endfor %}
-        {% endif %}
+          {% else %}
+            <div>
+              No results.
+            </div>
+          {% endif %}
         </form>
     </body>
 
