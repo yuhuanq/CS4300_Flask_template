@@ -73,11 +73,11 @@
                   {% endfor %}
                 </div>
             {% endfor %}
-          {% else %}
+        {% elif data is not none %}
             <div>
               No results.
             </div>
-          {% endif %}
+        {% endif %}
         </form>
     </body>
 
