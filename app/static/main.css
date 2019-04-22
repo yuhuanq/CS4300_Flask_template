@@ -7,10 +7,13 @@
   .global-search {
     padding: 20px 0;
     text-align:center;
-  }
-  body {
+}
+
+body {
     padding-top: 15%;
     padding-bottom: 15px;
+    /*background-color: #474e5d;*/
+    background-color: white;
   }
   .global-search {
     text-align:center;
@@ -24,22 +27,46 @@
     margin-bottom:0;
   }
 }
+.logo{
+  margin-top:0px;
+  font-size: 60px;
+  /*font-family: 'Alegreya', serif;*/
+  font-weight: bold;
+  font-family: Roboto Slab;
+  color:black;
+}
+a#sonotype:link {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+    }
+
+a#sonotype:visited {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+}
+
 .topcorner{
   position:absolute;
   top:2%;
   right:2%;
 }
-.btn{
-  background-color: #1db954;
-  border: none
+
+#search-btn{
+  background-color: white;
+  border: #474e5d;
+  /*margin-top: 20px;*/
 }
+
 .step-links a{
   color: #4285F4;
 }
 
 
 .git-container {
-  position: fixed;
+  /*position: fixed;*/
+  position: absolute;
   top: 0;
   right: 0;
   z-index: 1000;
@@ -73,6 +100,45 @@ a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:ho
 
 .git-container:hover .git-text {
   opacity: 1;
+  color:white;
+  font-family: 'Roboto', sans-serif;
   -webkit-transition: opacity .2s linear;
           transition: opacity .2s linear;
 }
+
+/*********************************************************/
+
+#user-search{
+  margin-bottom: 30px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  color: black;
+
+}
+.search-result{
+  margin-bottom:20px;
+}
+
+.thumbnail{
+  /*height:475px;*/
+  overflow:hidden;
+  /*height:auto;*/
+  width:100%;
+}
+.caption{
+  font-family: 'Lato', sans-serif;
+}
+
+
+
+.album-covers{
+  margin-top: 20px;
+}
+
+
+.annotations{
+  margin-top: 10px;
+  display:none;
+}
+
+
