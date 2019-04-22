@@ -182,7 +182,7 @@ def search():
     output_message = ''
   else:
     output_message = "Your search: " + query
-    data = find_most_similar(query, 50, start='2017-05-05')
+    data = find_most_similar(query, 50)
   return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
 
 
