@@ -1,16 +1,21 @@
 <html>
     <head>
+        <meta charset="UTF-8">
+        <title>sonotype</title>
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
+        <link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+        <!-- <script type=text/javascript src="{{url_for('static', filename='js/main.js') }}"></script> -->
     </head>
 
 
     <body>
-        <!-- <div class="topcorner"> -->
-        <!--     <p>Project Name: {{ name }}</p> -->
-        <!--     <p>Student Name: ({{ netid }})</p> -->
+      <!-- <div class="topcorner"> -->
+        <!--     <p>Project Name: Song Finder</p> -->
+        <!--     <p>Student Name: (James Zhou: jlz44, Tristan Stone: tjs264, Dylan Hecht: dkh55, Yiwen Huang: yw385, Yuhuan Qiu: yq56)</p> -->
         <!-- </div> -->
-
         <div class="git-container">
           <a href="https://github.com/yuhuanq/cs4300sp2019-sonotype" target="_blank" class="git-link">
             <span class="git-text">Visit us on Github</span>
@@ -19,32 +24,16 @@
         </div>
 
         <form class="form-inline global-search">
-            <h1 style="font-size: 55px; font-family:Futura; color: #191414">
-                S
-                <font color=#1db954>O</font>
-                N
-                <font color=#1db954>O</font>
-                T
-                <font color=#1db954>Y</font>
-                P
-                <font color=#1db954>E</font>
+            <h1 class="logo">
+              <a id="sonotype" href="https://sonotype.herokuapp.com/">sonotype</a>
             </h1>
 
             <br><br>
 
-            <div class="form-group">
-                <input id="input" type="text" name="search" class="form-control" placeholder="Songs about [topic]">
+            <div class="form-group" id="user-input">
+                <input id="user-input" type="text" name="search" class="form-control" placeholder="Find me songs about [topic]">
             </div>
-            <button type="submit" class="btn btn-info"> Go! </button>
-            <br>
-            <div class="form-group">
-              From
-              <input type="date" id="start" name="date-start" value="1970-01-01" min="1970-01-01" max="2019-12-31">
-            </div>
-            <div class="form-group">
-              To
-              <input type="date" id="end" name="date-end" value="2019-12-31" min="1970-01-01" max="2019-12-31">
-            </div>
+            <button type="submit" id="search-btn"> Go! </button>
         </form>
 
 
@@ -53,43 +42,84 @@
         <!-- grid of cards? or thumbnails (cards are only v4)-->
         <form class="form-inline global-search">
         {% if data %}
-            <h1>{{output_message}}</h1>
+            <h1 id="user-search">{{output_message}}</h1>
+            <br/>
             {% for d in data|batch(3) %}
                 <div class="row">
                   {% for song in d%}
                     <!-- <p>{{song}}</p> -->
-                      <div class="col-sm-6 col-md-4">
+                      <div  class="col-sm-6 col-md-4 search-result">
+
+
                         <div class="thumbnail">
-                          <img src={{song['image']}} alt="..." height="243" width="200">
+                          <img class= "album-covers" src={{song['image']}} alt="..." height="243" width="200">
                           <div class="caption">
-                            <h3>{{song['song']}}</h3>
+                          <h4>{{song['song']}}</h4>
+                          <br/>
+                          <br/>
+                            Score: {{song['score']}}
+                          <br/>
+                          <br/>
+                          <button class="btn btn-primary" type="button" onclick="toggle_visibility({{song['id']}});">
+                            See more</button>
+
+                          <div class="annotations" id="{{song['id']}}">
                             <p>
-                              Release date: {{song['release_date']}}
-                              </br>
-                              score: {{song['score']}}
-                              </br>
-                              page_views: {{song['page_views']}}
-                              </br>
-                              </br>
-                              <!-- {{song['lyric']}} -->
-                              </br>
-                              </br>
-                              {{song['annotations']}}
+                            </br>
+                            </br>
+                            Release date: {{song['release_date']}}
+
+                            </br>
+                            </br>
+                          </p>
+                            {%for annotation in song['annotations']%}
+                            <p>
+                            ------------------------------------
+                            </br>
+                            <br/>
+                            Song lyrics: {{annotation['lyric']}}
+                            </br>
+                            </br>
+                            Annotations: {{annotation['text']}}
+                            </br>
+                            <br/>
                             </p>
-                            <!-- <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p> -->
+                            {% endfor %}
                           </div>
-                        </div>
-                      </div>
+
+                            <!-- <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p> -->
+                          </div> <!-- end caption -->
+                        </div> <!-- end thumbnail -->
+                       <!-- end search-result -->
+                       </div>
+
 
                   {% endfor %}
-                </div>
+                </div> <!-- end row -->
             {% endfor %}
-        {% elif data is not none %}
-            <div>
-              No results.
+
+          {% else %}
+            <div class="no-results">
+              <p>No results.</p>
             </div>
-        {% endif %}
+          {% endif %}
         </form>
     </body>
+
+    <script type="text/javascript">
+                              function toggle_visibility(id) {
+                               var e = document.getElementById(id);
+                               var t = document.getElementsByClassName("thumbnail");
+                               if (e.style.display=='block'){
+                                e.style.display='none';
+                                // t.style.height=
+                               }
+                               else
+
+                               e.style.display = 'block';
+                                t.style.height="auto"
+
+                              }
+                            </script>
 
 </html>
