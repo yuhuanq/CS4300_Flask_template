@@ -176,13 +176,14 @@ def find_most_similar(query,n_results, start = None, end = None):
 @irsystem.route('/', methods=['GET'])
 def search():
   query = request.args.get('search')
-  start = request.args.get('start')
+  start = request.args.get('date-start')
+  end = request.args.get('date-end')
   if not query:
     data = None
     output_message = ''
   else:
     output_message = "Your search: " + query
-    data = find_most_similar(query, 50)
+    data = find_most_similar(query, 50, start, end)
   return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
 
 
