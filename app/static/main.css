@@ -127,10 +127,12 @@ a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:ho
 
 .row{
   width:100%;
+  margin-bottom:30px;
 }
 
 .search-result{
   width:33.33%;
+
 }
 .thumbnail{
   width:100%;
