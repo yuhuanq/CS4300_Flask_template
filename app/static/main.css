@@ -110,25 +110,31 @@ a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:ho
 
 #user-search{
   margin-bottom: 30px;
-  font-family: 'Lato', sans-serif;
+  font-family: Roboto Slab, sans-serif;
   font-size: 20px;
   color: black;
 
 }
-.search-result{
+/*.search-result{
   margin-bottom:20px;
-}
+  width:;
+}*/
 
-.thumbnail{
-  /*height:475px;*/
-  overflow:hidden;
-  /*height:auto;*/
-  width:100%;
-}
+
 .caption{
   font-family: 'Lato', sans-serif;
 }
 
+.row{
+  width:100%;
+}
+
+.search-result{
+  width:33.33%;
+}
+.thumbnail{
+  width:100%;
+}
 
 
 .album-covers{
@@ -136,9 +142,13 @@ a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:ho
 }
 
 
+
 .annotations{
   margin-top: 10px;
   display:none;
+}
+#random{
+  color:white;
 }
 
 
