@@ -8,6 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel #same as cosine similarity
 from collections import Counter
 from functools import reduce
+import pickle
 
 project_name = "Song Finder"
 net_id = "James Zhou: jlz44, Tristan Stone: tjs264, Dylan Hecht: dkh55, Yiwen Huang: yw385, Yuhuan Qiu: yq56"
@@ -20,45 +21,12 @@ annotation_to_fragment = {} #annotation_id to lyric fragment
 
 with open('songs.json') as json_file:
     all_songs = json.load(json_file)
+annotation_to_song = pickle.load( open( "annotation_to_song.p", "rb" ) )
+song_to_name = pickle.load( open( "song_to_name.p", "rb" ) )
+annotation_to_text = pickle.load( open( "annotation_to_text.p", "rb" ) )
+annotation_to_fragment = pickle.load( open( "annotation_to_fragment.p", "rb" ) )
 
-def create_dictionarys(json_file="songs.json", annotation_to_song={}, song_to_name={},
-                       annotation_to_text={}, annotation_to_fragment={},
-                      ):
-    """
-    Using songs.json as json_data
-    Creates annotation dictionary: {annotation_id:[song_id,fragment/text,annotation_text]}
-    """
 
-    #load song json file
-    with open(json_file) as song_json:
-        songs = json.load(song_json)
-
-        #iterate through all songs and input data accordingly
-        for song_id in songs:
-            song_data = songs[song_id]
-
-            #process annotations
-            for referent in song_data["referents"]:
-                lyric_fragment = referent["lyric"]
-                for annotation in referent["annotations"]:
-                    annotation_id = annotation["id"]
-                    annotation_text = annotation["annotation"]
-
-                    annotation_votes = annotation["votes_total"] # here is where we would record vote numbers
-
-                    if annotation_votes >= 1:
-                        if annotation_id not in annotation_to_song:
-                            annotation_to_song[annotation_id] = song_id
-
-                        if annotation_id not in annotation_to_text:
-                            annotation_to_text[annotation_id] = annotation_text
-
-                        if annotation_id not in annotation_to_fragment:
-                            annotation_to_fragment[annotation_id] = lyric_fragment
-
-    return (annotation_to_song,song_to_name,annotation_to_text,annotation_to_fragment)
-
-annotation_to_song,song_to_name,annotation_to_text,annotation_to_fragment = create_dictionarys()
 vectorizer = TfidfVectorizer(stop_words = "english",
                            max_df = 0.8,
                           norm = 'l2')
