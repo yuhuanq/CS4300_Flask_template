@@ -144,6 +144,11 @@ a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:ho
 }
 
 
+#annotation_text {
+  background-color: lightblue;
+  font-weight: 1000;
+}
+
 
 .annotations{
   margin-top: 10px;

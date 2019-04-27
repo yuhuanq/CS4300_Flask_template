@@ -110,26 +110,20 @@
                             See more</button>
 
                           <div class="annotations" id="{{song['id']}}">
-                            <p>
-                            </br>
-                            </br>
-                            Release date: {{song['release_date']}}
-
-                            </br>
-                            </br>
+                          <p>
+                            Release date: {{song['release_date']}} <br><br/>
                           </p>
-                            {%for annotation in song['annotations']%}
-                            <p>
-                            ------------------------------------
-                            </br>
-                            <br/>
-                            Song lyrics: {{annotation['lyric']}}
-                            </br>
-                            </br>
-                            Annotations: {{annotation['text']}}
-                            </br>
-                            <br/>
-                            </p>
+
+                          {%for annotation in song['annotations']%}
+                          <p>
+
+                          ------------------------------------
+                          <br><br/>
+                          <div  class = "annotation_text"> Song lyrics: {{annotation['lyric']}} </div>
+                          <br><br/>
+                          <div  class = "annotation_text"> Annotations: {{annotation['text']}} </div>
+
+                          </p>
                             {% endfor %}
                           </div>
 
@@ -152,6 +146,51 @@
         </form>
     </body>
 
+
+    <script type="text/javascript">
+      //$(function() {
+        $(".annotation_text").each( function(idx, el) {
+          var str = $(this).text();
+          //var arr = ["ribbon in the sky", "ribbon", "sky"];
+          var arr = {{query|safe}};
+          arr.forEach( function(query_match) {
+            console.log(query_match);
+            var txt = query_match;
+            var re = new RegExp(txt, 'ig');
+
+
+            var matches = [];
+            while (m = re.exec(str)) {
+              matches.push(m[0]);
+            }
+            var matches_set = new Set(matches);
+            matches.forEach(function(element) {
+              var re2 = new RegExp(element, 'g');
+              str = str.replace(re2, '<div class="bold_text">' + element +'</div>');
+            });
+
+
+
+          });
+            $(this).html(str);
+            $('.bold_text').css('font-weight','bold');
+            $('.bold_text').css('color','#b9cd6d');
+        });
+        // var str = $(" #annotation_text ").text();
+        // var re = new RegExp('record', 'g');
+
+
+        // str = str.replace(re, '<b>'+ 'record' +'</b>');
+        // $(" #annotation_text ").html(str);
+        // console.log(str);
+
+
+      //});
+    </script>
+
+
+    </script>
+
     <script type="text/javascript">
                               function toggle_visibility(id) {
                                var e = document.getElementById(id);
@@ -166,6 +205,6 @@
                                 t.style.height="auto"
 
                               }
-                            </script>
+    </script>
 
 </html>

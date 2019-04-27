@@ -428,6 +428,10 @@ hr {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.bold_text {
+  font-weight: 300;
+}
+
 small,
 .small {
   font-size: 80%;

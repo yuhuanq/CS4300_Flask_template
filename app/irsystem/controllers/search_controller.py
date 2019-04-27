@@ -9,6 +9,10 @@ from sklearn.metrics.pairwise import linear_kernel #same as cosine similarity
 from collections import Counter
 from functools import reduce
 import pickle
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+
 
 project_name = "Song Finder"
 net_id = "James Zhou: jlz44, Tristan Stone: tjs264, Dylan Hecht: dkh55, Yiwen Huang: yw385, Yuhuan Qiu: yq56"
@@ -156,7 +160,16 @@ def search():
   if end:
     end = "{}-12-31".format(end)
     data = find_most_similar(query, 50, start, end)
-  return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
+
+  stops =  set(stopwords.words('english'))
+  query_words = [query]
+  if query:
+    for word in query.split():
+      if not word in stops:
+          query_words.append(word)
+
+  return render_template('search.html', name=project_name, netid=net_id,
+    output_message=output_message, data=data, query=query_words)
 
 
 
