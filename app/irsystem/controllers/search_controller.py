@@ -58,7 +58,7 @@ def should_filter(start, end, song_id):
 
     return False
 
-def find_most_similar(query,n_results, start = None, end = None):
+def find_most_similar(query,n_results, start = None, end = None, relevance_feedback=True):
     """
     finds n most similar annotations to query
     """
@@ -71,6 +71,15 @@ def find_most_similar(query,n_results, start = None, end = None):
     #find cosine similarities and the indices of related docs
     cosine_similarities = linear_kernel(query_vector, tf_idf).flatten()
     related_docs_indices = cosine_similarities.argsort()[-n_results:]
+
+    if relevance_feedback:
+        #psueodo-rel feedback take top 4 centroid
+        top4_doc_ids = related_docs_indices[:4]
+        for doc_id in top4_doc_ids:
+            query_vector += tf_idf[doc_id] / len(top4_doc_ids)
+        # do search again with transformed query
+        cosine_similarities = linear_kernel(query_vector, tf_idf).flatten()
+        related_docs_indices = cosine_similarities.argsort()[-n_results:]
 
 
     #find highest similarity scores
@@ -145,22 +154,28 @@ def find_most_similar(query,n_results, start = None, end = None):
     result.sort(key = lambda x : x['score'], reverse = True)
     return result
 
+def str2bool(v):
+  if not v:
+    return False
+  return v.lower() in ("yes", "true", "t", "1")
+
 @irsystem.route('/', methods=['GET'])
 def search():
   query = request.args.get('search')
   start = request.args.get('date-start')
+  relevance_feedback = str2bool(request.args.get('relevance_feedback'))
   end = request.args.get('date-end')
   if not query:
     data = None
     output_message = ''
   else:
     output_message = "Your search: " + query
-    data = find_most_similar(query, 50)
+    data = find_most_similar(query, 50, relevance_feedback=relevance_feedback)
   if start:
     start = "{}-01-01".format(start)
   if end:
     end = "{}-12-31".format(end)
-    data = find_most_similar(query, 50, start, end)
+    data = find_most_similar(query, 50, start, end, relevance_feedback)
 
   stops =  set(stopwords.words('english'))
   query_words = [query]
