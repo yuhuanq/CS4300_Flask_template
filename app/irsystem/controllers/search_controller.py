@@ -155,6 +155,7 @@ def search():
     output_message = ''
   else:
     output_message = "Your search: " + query
+    data = find_most_similar(query, 50)
   if start:
     start = "{}-01-01".format(start)
   if end:

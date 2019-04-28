@@ -12,6 +12,8 @@
         <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel = "stylesheet">
         <script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
         <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
         <!-- <script type=text/javascript src="{{url_for('static', filename='js/main.js') }}"></script> -->
 
         <script>
@@ -74,12 +76,45 @@
             style = "border:0; color:#b9cd6d; font-weight:bold;">
             <br><br/>
             <div id = "slider" style = "width:500px;"></div>
-
-
         </form>
 
 
 
+        <!-- generate modals for later use; has to be outside the form; idk screws it up o/w -->
+        {% if data %}
+            {% for d in data|batch(3) %}
+                  {% for song in d%}
+                    <!-- Modal -->
+                    <div id="modal_{{song['id']}}" class="modal fade" role="dialog">
+                      <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">{{song['song']}}</h4>
+                          </div>
+                          <div class="modal-body">
+                            <!-- <p>Some text in the modal.</p> -->
+                              {%for annotation in song['annotations']%}
+                                  <div class="well" align="left">
+                                      <div class="annotation_text">Song lyrics: {{annotation['lyric']}}</div>
+                                        <br><br/>
+                                      <div class="annotation_text">Annotations: {{annotation['text']}}</div>
+                                  </div>
+                                  <!-- <br><br/> -->
+                              {% endfor %}
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  {% endfor %}
+            {% endfor %}
+        {% endif %}
 
 
         <!-- grid of cards? or thumbnails (cards are only v4)-->
@@ -92,48 +127,30 @@
                   {% for song in d%}
                     <!-- <p>{{song}}</p> -->
                       <div  class="col-sm-6 col-md-4 search-result">
-
-
                         <div class="thumbnail">
                           <img class= "album-covers" src={{song['image']}} alt="..." height="243" width="200">
                           <div class="caption">
-                          <h4>{{song['song']}}</h4>
-                          <br/>
-                          <br/>
-                            Artist: {{song['artist']}}
-                          <br/>
-                          <br/>
-                            Score: {{song['score']}}
-                          <br/>
-                          <br/>
-                          <button class="btn btn-primary" type="button" onclick="toggle_visibility({{song['id']}});">
-                            See more</button>
-
-                          <div class="annotations" id="{{song['id']}}">
-                          <p>
-                            Release date: {{song['release_date']}} <br><br/>
-                          </p>
-
-                          {%for annotation in song['annotations']%}
-                          <p>
-
-                          ------------------------------------
-                          <br><br/>
-                          <div  class = "annotation_text"> Song lyrics: {{annotation['lyric']}} </div>
-                          <br><br/>
-                          <div  class = "annotation_text"> Annotations: {{annotation['text']}} </div>
-
-                          </p>
-                            {% endfor %}
-                          </div>
-
-                            <!-- <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p> -->
-                          </div> <!-- end caption -->
-                        </div> <!-- end thumbnail -->
-                       <!-- end search-result -->
-                       </div>
+                            <h4>{{song['song']}}</h4>
+                            <br/>
+                            <br/>
+                              Artist: {{song['artist']}}
+                            <br/>
+                            <br/>
+                            <p>
+                              Release date: {{song['release_date']}} <br><br/>
+                            </p>
+                            <br/>
+                              Score: {{song['score']}}
+                            <br/>
+                            <br/>
 
 
+                            <!-- Trigger the modal with a button -->
+                            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modal_{{song['id']}}">Open Modal</button>
+
+                          </div> <!-- caption -->
+                        </div> <!-- thumbnail -->
+                      </div> <!-- search result -->
                   {% endfor %}
                 </div> <!-- end row -->
             {% endfor %}
@@ -166,15 +183,13 @@
             var matches_set = new Set(matches);
             matches.forEach(function(element) {
               var re2 = new RegExp(element, 'g');
-              str = str.replace(re2, '<div class="bold_text">' + element +'</div>');
+              str = str.replace(re2, '<strong>' + element +'</strong>');
             });
 
 
 
           });
             $(this).html(str);
-            $('.bold_text').css('font-weight','bold');
-            $('.bold_text').css('color','#b9cd6d');
         });
         // var str = $(" #annotation_text ").text();
         // var re = new RegExp('record', 'g');
@@ -183,14 +198,11 @@
         // str = str.replace(re, '<b>'+ 'record' +'</b>');
         // $(" #annotation_text ").html(str);
         // console.log(str);
-
-
       //});
     </script>
 
 
     </script>
-
     <script type="text/javascript">
                               function toggle_visibility(id) {
                                var e = document.getElementById(id);
