@@ -19,15 +19,20 @@
         <script>
            $( "#start" ).ReadOnly = true;
            $(function() {
+              var start = {{date_start|safe}};
+              var end = {{date_end|safe}};
               $( "#slider" ).slider({
                  range:true,
                  min: 1985,
                  max: 2019,
-                 values: [ 1985, 2019 ],
+                 values: [ start, end ],
                  slide: function( event, ui ) {
                     $( "#start" ).val(ui.values[ 0 ] );
                     $( "#end" ).val(ui.values[ 1 ] );
 
+                 },
+                 stop: function(event, ui ) {
+                  $( "#go" ).click();
                  }
               });
               $( "#start" ).val( $( "#slider" ).slider( "values", 0 ) );
@@ -36,6 +41,7 @@
 
            });
         </script>
+
     </head>
 
 
@@ -64,7 +70,7 @@
             <div class="form-group">
                 <input id="input" type="text" name="search" class="form-control" placeholder="Songs about [topic]">
             </div>
-            <button type="submit" class="btn btn-info"> Go! </button>
+            <button type="submit" id = "go" class="btn btn-info"> Go! </button>
             <br/>
             <br/>
 
@@ -165,13 +171,21 @@
 
 
     <script type="text/javascript">
+      var query = {{query|safe}};
+      if (query[0]) {
+        console.log(query[0]);
+        $( "#input").val(query[0]);
+      }
+    </script>
+
+
+    <script type="text/javascript">
       //$(function() {
         $(".annotation_text").each( function(idx, el) {
           var str = $(this).text();
           //var arr = ["ribbon in the sky", "ribbon", "sky"];
           var arr = {{query|safe}};
           arr.forEach( function(query_match) {
-            console.log(query_match);
             var txt = query_match;
             var re = new RegExp(txt, 'ig');
 
@@ -191,14 +205,7 @@
           });
             $(this).html(str);
         });
-        // var str = $(" #annotation_text ").text();
-        // var re = new RegExp('record', 'g');
 
-
-        // str = str.replace(re, '<b>'+ 'record' +'</b>');
-        // $(" #annotation_text ").html(str);
-        // console.log(str);
-      //});
     </script>
 
 

@@ -147,7 +147,7 @@ def find_most_similar(query,n_results, start = None, end = None, relevance_feedb
         )/max_sim_sum
         page_views_normalized = song['page_views'] / max_song_page_views
 
-        song['score'] = .8 * similarity_sum_normalized + .2 * page_views_normalized
+        song['score'] = round(.8 * similarity_sum_normalized + .2 * page_views_normalized, 2)
 
         result.append(song)
 
@@ -162,20 +162,35 @@ def str2bool(v):
 @irsystem.route('/', methods=['GET'])
 def search():
   query = request.args.get('search')
-  start = request.args.get('date-start')
+  start_year = request.args.get('date-start')
   relevance_feedback = str2bool(request.args.get('relevance_feedback'))
-  end = request.args.get('date-end')
+  end_year = request.args.get('date-end')
+
+  start = 1985
+  end = 2019
+
+  if not start_year:
+    start_year = 1985
+  if not end_year:
+    end_year = 2019
+
   if not query:
     data = None
     output_message = ''
+    query = ""
   else:
     output_message = "Your search: " + query
-    data = find_most_similar(query, 50, relevance_feedback=relevance_feedback)
-  if start:
-    start = "{}-01-01".format(start)
-  if end:
-    end = "{}-12-31".format(end)
+
+    if start_year:
+      start = "{}-01-01".format(start_year)
+
+    if end_year:
+      end = "{}-12-31".format(end_year)
+
+    print(start)
+    print(end)
     data = find_most_similar(query, 50, start, end, relevance_feedback)
+
 
   stops =  set(stopwords.words('english'))
   query_words = [query]
@@ -185,7 +200,7 @@ def search():
           query_words.append(word)
 
   return render_template('search.html', name=project_name, netid=net_id,
-    output_message=output_message, data=data, query=query_words)
+    output_message=output_message, data=data, query=query_words, date_start = start_year, date_end = end_year)
 
 
 
