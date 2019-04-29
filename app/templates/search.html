@@ -123,9 +123,11 @@
                             <!-- <p>Some text in the modal.</p> -->
                               {%for annotation in song['annotations']%}
                                   <div class="well" align="left">
-                                      <div class="annotation_text">Song lyrics: {{annotation['lyric']}}</div>
-                                        <br><br/>
-                                      <div class="annotation_text">Annotations: {{annotation['text']}}</div>
+                                      <div class="annotation_text"> Song lyric: <br>
+                                      {{annotation['lyric']}}</div>
+                                        <br>
+                                      <div class="annotation_text">Annotation: <br>
+                                      {{annotation['text']}}</div>
                                   </div>
                                   <!-- <br><br/> -->
                               {% endfor %}
@@ -204,9 +206,11 @@
           var str = $(this).text();
           //var arr = ["ribbon in the sky", "ribbon", "sky"];
           var arr = {{query|safe}};
+
+          //for every query word in query
           arr.forEach( function(query_match) {
             var txt = query_match;
-            var re = new RegExp(txt, 'ig');
+            var re = new RegExp("\\b" + txt + "\\b", 'ig'); //regex pattern
 
 
             var matches = [];
@@ -215,11 +219,12 @@
             }
             var matches_set = new Set(matches);
             matches.forEach(function(element) {
-              var re2 = new RegExp(element, 'g');
+              var re2 = new RegExp(element, 'ig');
               str = str.replace(re2, '<strong>' + element +'</strong>');
             });
 
-
+            // var re3 = new RegExp("\n", 'ig');
+            // str = str.replace(re3, '<br>');
 
           });
             $(this).html(str);
