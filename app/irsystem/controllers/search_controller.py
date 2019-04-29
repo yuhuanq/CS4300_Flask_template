@@ -11,7 +11,8 @@ from functools import reduce
 import pickle
 import nltk
 from nltk.corpus import stopwords
-nltk.download('stopwords')
+import spacy
+#nltk.download('stopwords')
 
 
 project_name = "Song Finder"
@@ -23,18 +24,55 @@ song_to_name = {} #song_id to name of song
 annotation_to_text = {} #annotation_id to annotation text
 annotation_to_fragment = {} #annotation_id to lyric fragment
 
-with open('songs.json') as json_file:
-    all_songs = json.load(json_file)
-annotation_to_song = pickle.load( open( "annotation_to_song.p", "rb" ) )
-song_to_name = pickle.load( open( "song_to_name.p", "rb" ) )
-annotation_to_text = pickle.load( open( "annotation_to_text.p", "rb" ) )
-annotation_to_fragment = pickle.load( open( "annotation_to_fragment.p", "rb" ) )
+# with open('songs.json') as json_file:
+#     all_songs = json.load(json_file)
+# annotation_to_song = pickle.load( open( "annotation_to_song_p", "rb" ) )
+# song_to_name = pickle.load( open( "song_to_name_p", "rb" ) )
+# annotation_to_text = pickle.load( open( "annotation_to_text_p", "rb" ) )
+# annotation_to_fragment = pickle.load( open( "annotation_to_fragment_p", "rb" ) )
 
 
-vectorizer = TfidfVectorizer(stop_words = "english",
-                           max_df = 0.8,
-                          norm = 'l2')
-tf_idf = vectorizer.fit_transform(list(annotation_to_text.values()))
+# tf_idf = pickle.load(open('tf_idf_p', 'rb'))
+# vectorizer = pickle.load(open('vectorizer_p', "rb"))
+
+#this should be the same for both the tf_idf creation and the
+#tokenization of queries 
+def annotation_tokenizer(text):
+    doc = nlp(text)
+    for ent in doc.ents:
+        text = text + " {}".format(ent)
+    tokenized_annotation = [token.lower_ for token in doc if not token.is_punct]
+    #maybe make entities lowercase as well?
+    ents = [ent.text for ent in doc.ents]
+    tokenized_annotation = tokenized_annotation + ents
+    return tokenized_annotation
+
+nlp = spacy.load("en_core_web_lg")
+with open('songs.json') as song_json:
+    all_songs = json.load(song_json)
+
+doc_id_to_ref_id = {} #index of tf_idf to annotation_id
+
+ctr = 0
+annotations = []
+for song_id,v in all_songs.items():
+    for r in v['referents']:
+        for a in r['annotations']:
+            doc_id_to_ref_id[ctr] = r['id']
+            annotation_to_song[r['id']] = song_id
+            song_to_name[song_id] = v['full_title']
+            annotation_to_text[a['id']] = r['lyric']
+            ctr +=1
+            annotations.append(a['annotation'])
+  
+
+vectorizer = TfidfVectorizer(analyzer ='word', tokenizer=annotation_tokenizer)
+
+print("starting slow thing")
+tf_idf = vectorizer.fit_transform(annotations)
+print("done with slow thing")
+
+# index_to_annotation = pickle.load(open('doc_id_to_ref_id_p'), 'rb')
 index_to_annotation = {i:v for i, v in enumerate(vectorizer.get_feature_names())}
 index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
 
