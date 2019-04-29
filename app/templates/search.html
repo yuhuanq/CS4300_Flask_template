@@ -80,8 +80,27 @@
             <label for = "end">To:</label>
             <input type = "text" id = "end" name = "date-end" placeholder = "2019" readonly
             style = "border:0; color:#b9cd6d; font-weight:bold;">
+
             <br><br/>
             <div id = "slider" style = "width:500px;"></div>
+            {% if data %}
+          <br/>
+            <br/>
+            <!-- Control buttons -->
+            <div id="artistFilterContainer">
+              Filter artists:
+              <button class="btn active"> Show all</button>
+              {% set artists = [] %}
+              {% set counter = 0 %}
+              {% for song in data %}
+                {% if (song['artist'] not in artists) %}
+                  <button class="btn"> {{song['artist']}}</button>
+                  <!-- {{artists.append(song['artist'])}} -->
+              {% endif %}
+              {% endfor %}
+              {% set artists = [] %}
+               </div>
+            {% endif %}
         </form>
 
 
