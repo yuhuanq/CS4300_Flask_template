@@ -191,7 +191,7 @@
           //for every query word in query
           arr.forEach( function(query_match) {
             var txt = query_match;
-            var re = new RegExp("\\b"+txt+"\\b", 'ig'); //regex pattern
+            var re = new RegExp("\\b" + txt + "\\b", 'ig'); //regex pattern
 
 
             var matches = [];
@@ -204,22 +204,10 @@
               str = str.replace(re2, '<strong>' + element +'</strong>');
             });
 
-
+            // var re3 = new RegExp("\n", 'ig');
+            // str = str.replace(re3, '<br>');
 
           });
-            $(this).html(str);
-        });
-
-    </script>
-
-    <script type="text/javascript">
-      //$(function() {
-        $(".annotation_text").each( function(idx, el) {
-          var str = $(this).text();
-          //var arr = ["ribbon in the sky", "ribbon", "sky"];
-            var re = new RegExp("\n", 'ig');
-            str = str.replace(re, '<br>');
-
             $(this).html(str);
         });
 
