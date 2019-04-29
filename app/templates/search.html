@@ -104,9 +104,11 @@
                             <!-- <p>Some text in the modal.</p> -->
                               {%for annotation in song['annotations']%}
                                   <div class="well" align="left">
-                                      <div class="annotation_text">Song lyrics: {{annotation['lyric']}}</div>
-                                        <br><br/>
-                                      <div class="annotation_text">Annotations: {{annotation['text']}}</div>
+                                      <div class="annotation_text"> Song lyric: <br>
+                                      {{annotation['lyric']}}</div>
+                                        <br>
+                                      <div class="annotation_text">Annotation: <br>
+                                      {{annotation['text']}}</div>
                                   </div>
                                   <!-- <br><br/> -->
                               {% endfor %}
@@ -203,6 +205,19 @@
 
 
           });
+            $(this).html(str);
+        });
+
+    </script>
+
+    <script type="text/javascript">
+      //$(function() {
+        $(".annotation_text").each( function(idx, el) {
+          var str = $(this).text();
+          //var arr = ["ribbon in the sky", "ribbon", "sky"];
+            var re = new RegExp("\n", 'ig');
+            str = str.replace(re, '<br>');
+
             $(this).html(str);
         });
 
