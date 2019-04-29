@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flask
-        image: ifilonenko/flask-template:v3
+        image: yuhuanq/sonotype:latest
         env:
         - name: APP_SETTINGS
           value: config.DevelopmentConfig

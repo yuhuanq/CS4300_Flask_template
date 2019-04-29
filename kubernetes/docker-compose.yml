@@ -1,5 +1,5 @@
 flask:
-    image: ifilonenko/flask-template:v3
+    image: yuhuanq/sonotype:latest
     ports:
       - "5000:5000"
     environment:
