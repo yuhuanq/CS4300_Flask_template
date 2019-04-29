@@ -185,9 +185,11 @@
           var str = $(this).text();
           //var arr = ["ribbon in the sky", "ribbon", "sky"];
           var arr = {{query|safe}};
+
+          //for every query word in query
           arr.forEach( function(query_match) {
             var txt = query_match;
-            var re = new RegExp(txt, 'ig');
+            var re = new RegExp("\\b"+txt+"\\b", 'ig'); //regex pattern
 
 
             var matches = [];
