@@ -94,7 +94,7 @@
               {% set counter = 0 %}
               {% for song in data %}
                 {% if (song['artist'] not in artists) %}
-                  <button class="btn"> {{song['artist']}}</button>
+                  <button class="btn" type = 'submit' name = 'artist' value = '{{song['artist']}}'> {{song['artist']}}</button>
                   <!-- {{artists.append(song['artist'])}} -->
               {% endif %}
               {% endfor %}
