@@ -178,8 +178,13 @@ background: #f6b93b;
 /*border-color: #f6b93b !important;*/
 transition: all 0.3s ease 0s;
 }
-.btn.artist-btn.active{
-  background: #f6b93b;
+
+.active{
+background: #f6b93b !important;
+
 }
 
+#artist_saved {
+  display: none;
+}
 

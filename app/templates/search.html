@@ -76,7 +76,7 @@
             <button type="submit" id = "go" class="btn btn-info"> Go! </button>
             <br/>
             <br/>
-
+            <input type = "text" name = "artist_saved" id = "artist_saved">
             <label for = "start">From:</label>
             <input type = "text" id = "start" name = "date-start" placeholder = "1985" readonly
             style = "border:0; color:#b9cd6d; font-weight:bold;">
@@ -92,12 +92,13 @@
             <!-- Control buttons -->
             <div id="artistFilterContainer">
               Show songs by:
-              <button class="btn artist-btn active"> All</button>
+              <button class="btn artist-btn" id="All" name = 'artist' value = 'All'> All</button>
               {% set artists = [] %}
               {% set counter = 0 %}
               {% for song in data %}
                 {% if (song['artist'] not in artists) %}
-                  <button class="btn artist-btn" type = 'submit' name = 'artist' value = '{{song['artist']}}'> {{song['artist']}}</button>
+                {% set name = song['artist'].split()[0] %}
+                  <button class="btn artist-btn" type = 'submit' name = 'artist' id = '{{name}}' value = '{{song['artist']}}'> {{song['artist']}}</button>
                   <!-- {{artists.append(song['artist'])}} -->
               {% endif %}
               {% endfor %}
@@ -193,6 +194,19 @@
         </form>
     </body>
 
+    <script type="text/javascript">
+      var cur_artist = "{{artist|safe}} ";
+      var artist_full = "{{artist_full|safe}} ";
+      artist_full = artist_full.substring(0, artist_full.length - 1);
+      cur_artist = cur_artist.substring(0, cur_artist.length - 1);
+      console.log("#" + cur_artist);
+      $("#" + cur_artist).addClass("active");
+      if (artist_full != "None") {
+        $("#artist_saved").val(artist_full);
+      }
+      // var btnContainer = document.getElementById("artistFilterContainer");
+
+    </script>
 
     <script type="text/javascript">
       var query = {{query|safe}};
@@ -200,6 +214,8 @@
         console.log(query[0]);
         $( "#input").val(query[0]);
       }
+
+
     </script>
 
 

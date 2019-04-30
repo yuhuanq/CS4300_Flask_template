@@ -40,6 +40,8 @@ index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
 
 
 def should_filter(start, end, artist, song_id):
+    if artist == "All":
+        return False;
     if artist:
         if not all_songs[song_id]["artists_names"] == artist:
             return True
@@ -165,12 +167,16 @@ def str2bool(v):
 
 @irsystem.route('/', methods=['GET'])
 def search():
+  print(3339483 in all_songs)
   query = request.args.get('search')
   start_year = request.args.get('date-start')
   end_year = request.args.get('date-end')
   relevance_feedback = str2bool(request.args.get('relevance_feedback'))
   artist = request.args.get('artist')
-  print(artist)
+  artist_saved =  request.args.get('artist_saved')
+  if not artist and artist_saved:
+    artist = artist_saved
+    print(artist)
 
 
   start = 1985
@@ -206,8 +212,15 @@ def search():
       if not word in stops:
           query_words.append(word)
 
+  artist_full = artist
+  if not artist:
+    artist = "All"
+  else:
+    artist = artist.split()[0]
+
   return render_template('search.html', name=project_name, netid=net_id,
-    output_message=output_message, data=data, query=query_words, date_start = start_year, date_end = end_year)
+    output_message=output_message, data=data, query=query_words,
+    date_start = start_year, date_end = end_year, artist = artist, artist_full = artist_full)
 
 
 
