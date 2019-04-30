@@ -174,11 +174,8 @@ def find_most_similar(query,n_results, start = None, end = None, relevance_feedb
     #find ids of most similar annotations
     annotation_ids = [index_to_id[index] for index in related_docs_indices] #can later be used to find lyric fragment maybe
 
-    annotation_ids = boolean_search(query)
-    print('printing ids')
-    for a in annotation_ids:
-        print(a)
-    sim_scores = [1 for b in annotation_ids]
+    boolean_ids = boolean_search(query)
+    
     # group them by songs
     song_id_to_annotations = {}
     max_sim_sum = 0

@@ -9,6 +9,8 @@ import sys
 import time
 import pickle
 import dill
+from itertools import chain, combinations
+
 
 
 
@@ -16,17 +18,42 @@ import dill
 nlp = spacy.load("en_core_web_lg")
 def annotation_tokenizer(text):
     doc = nlp(text)
-    for ent in doc.ents:
-        text = text + " {}".format(ent)
+    # for ent in doc.ents:
+    #     text = text + " {}".format(ent)
     # tokenized_annotation = [token.lower_ for token in doc if not token.is_punct]
     tokenized_annotation = []
     for token in doc:
         if not token.is_punct and not token.is_stop:
             tokenized_annotation.append(token.lower_)
     #maybe make entities lowercase as well?
-    ents = [ent.text for ent in doc.ents]
+    ents = [ent.text.lower() for ent in doc.ents]
     tokenized_annotation = tokenized_annotation + ents
-    return tokenized_annotation
+    return tokenized_annotation, ents
+
+# def tokenized_annotations(annotations):
+#     accum = []#list of lists
+#     for annotation in annotations:
+#         tokenized_annotation, ents = annotation_tokenizer(annotation)
+#         accum.append(tokenized_annotation)
+#     return accum
+
+def get_ents_and_tokenize(annotation_to_text):
+    entity_to_annotation_id = {} #entity as key, annotation_id value
+    accum = []
+    for an_id, annotation in annotation_to_text.items():
+        tokenized_annotation, ents = annotation_tokenizer(annotation)
+        accum.append(tokenized_annotation)
+        if len(ents) > 0:
+            for entity in ents:
+                # print(entity)
+                if entity not in entity_to_annotation_id:
+                    entity_to_annotation_id[entity] = [an_id]
+                else:
+                    entity_to_annotation_id[entity].append(an_id)
+    return (accum, entity_to_annotation_id)
+
+def nothing(text):
+    return text
 
 def do_pickle():
     print("oh no")
@@ -99,20 +126,30 @@ def do_pickle():
 
 
 
-
-
     #%%
     #do sklearn stuff
     #this is really slow because of the tokenizer
-    vectorizer = TfidfVectorizer(analyzer ='word', tokenizer=annotation_tokenizer)
-
-    annotations = list(annotation_to_text.values())
-
     start = time.time()
+    vectorizer = TfidfVectorizer(tokenizer=nothing, preprocessor=nothing,)
+
+    # annotations = tokenized_annotations(list(annotation_to_text.values()))
+    annotations, entity_to_annotation_id = get_ents_and_tokenize(annotation_to_text)
+
+    if 'kanye' in entity_to_annotation_id:
+        print("yesssssssssssssssssssssssssssss")
+    else:
+        print("fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
+    
     tf_idf = vectorizer.fit_transform(annotations)
     end = time.time()
     print("Time was {}".format(end-start))
 
+    pickle.dump(entity_to_annotation_id, open("entity_to_annotation.pickle", 'wb'))
+
+    # for k,v in entity_to_annotation_id.items():
+    #     print(k, v)
+    #     break
 
     index_to_annotation = {i:v for i, v in enumerate(vectorizer.get_feature_names())}
     index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
@@ -160,3 +197,42 @@ def do_pickle():
     vectorizer_pickle.close()
 
 do_pickle()
+
+
+# nlp = spacy.load("en_core_web_sm")
+# def query_tokenizer(text):
+#     doc = nlp(text)
+#     for ent in doc.ents:
+#         text = text + " {}".format(ent)
+#     tokenized_annotation = [token.lower_ for token in doc if not token.is_punct]
+#     #maybe make entities lowercase as well?
+#     ents = [ent.text for ent in doc.ents]
+#     for ent in ents:
+#         print("this is an entity!: {}".format(ent))
+#     tokenized_annotation = tokenized_annotation + ents
+#     # print(type(tokenized_annotation))
+#     # print(tokenized_annotation)
+#     # for thing in tokenized_annotation:
+#     #     print(thing)
+#     # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+#     return tokenized_annotation
+
+# def powerset(iterable):
+#     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+#     s = list(iterable)
+#     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+# def boolean_search(query):
+#     tokens = query_tokenizer(query)
+#     power_set = powerset(tokens)
+#     for thing in power_set:
+#         print(thing)
+#         print(len(thing))
+#         accum = ""
+#         for t in thing:
+#             print(t)
+#             accum = accum + ' ' + t
+#             print(accum)
+
+# boolean_search('invisible man')
+#%%
