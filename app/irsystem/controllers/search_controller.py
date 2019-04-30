@@ -160,7 +160,8 @@ def find_most_similar(query,n_results, start = None, end = None, artist = None, 
 
 def str2bool(v):
   if not v:
-    return False
+    # default on
+    return True
   return v.lower() in ("yes", "true", "t", "1")
 
 @irsystem.route('/', methods=['GET'])
