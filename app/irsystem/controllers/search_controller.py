@@ -98,7 +98,7 @@ def find_most_similar(query,n_results, start = None, end = None, artist = None, 
     max_song_page_views = 0
     for annotation_id, sim_score in zip(annotation_ids, sim_scores):
         song_id = annotation_to_song[annotation_id]
-        if sim_score == 0 or should_filter(start, end, artist, song_id):
+        if sim_score < 0.1 or should_filter(start, end, artist, song_id):
             continue
         if song_id not in song_id_to_annotations:
             song_id_to_annotations[song_id] = []

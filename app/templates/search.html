@@ -19,6 +19,8 @@
         <script>
            $( "#start" ).ReadOnly = true;
            $(function() {
+              $( "#slider" ).css("background-image", "none");
+              $( "#slider" ).css("color", "#f6b93b");
               var start = {{date_start|safe}};
               var end = {{date_end|safe}};
               $( "#slider" ).slider({
@@ -37,7 +39,8 @@
               });
               $( "#start" ).val( $( "#slider" ).slider( "values", 0 ) );
               $( "#end" ).val( $( "#slider" ).slider( "values", 1 ) );
-
+              $( "#start" ).css("color", "#000000");
+              $( "#end" ).css("color", "#000000");
 
            });
         </script>
@@ -89,12 +92,12 @@
             <!-- Control buttons -->
             <div id="artistFilterContainer">
               Filter artists:
-              <button class="btn active"> Show all</button>
+              <button class="btn active artist-btn"> Show all</button>
               {% set artists = [] %}
               {% set counter = 0 %}
               {% for song in data %}
                 {% if (song['artist'] not in artists) %}
-                  <button class="btn" type = 'submit' name = 'artist' value = '{{song['artist']}}'> {{song['artist']}}</button>
+                  <button class="btn artist-btn" type = 'submit' name = 'artist' value = '{{song['artist']}}'> {{song['artist']}}</button>
                   <!-- {{artists.append(song['artist'])}} -->
               {% endif %}
               {% endfor %}
@@ -223,8 +226,8 @@
               str = str.replace(re, '<strong>' + element +'</strong>');
             });
 
-            // var re3 = new RegExp("\n", 'ig');
-            // str = str.replace(re3, '<br>');
+            var re3 = new RegExp("\n", 'ig');
+            str = str.replace(re3, '<br>');
 
           });
             $(this).html(str);
