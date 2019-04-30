@@ -14,6 +14,8 @@ from nltk.corpus import stopwords
 import spacy
 import dill
 import scipy.sparse as sp
+from itertools import chain, combinations
+
 # from data.data_pickler import annotation_tokenizer
 
 
@@ -54,9 +56,11 @@ song_to_name = pickle.load( open( "data/song_to_name_p", "rb" ) )
 annotation_to_text = pickle.load( open( "data/annotation_to_text_p", "rb" ) )
 annotation_to_fragment = pickle.load( open( "data/annotation_to_fragment_p", "rb" ) )
 
+entity_to_annotation_id = pickle.load(open("data/entity_to_annotation.pickle", 'rb'))
+
 
 tf_idf = pickle.load(open('data/tf_idf_p', 'rb'))
-vectorizer = dill.load(open('data/vectorizer_p.dill', "rb"))
+# vectorizer = dill.load(open('data/vectorizer_p.dill', "rb"))
 
 nlp = spacy.load("en_core_web_lg")
 def query_tokenizer(text):
@@ -119,6 +123,27 @@ def should_filter(start, end, song_id):
 
     return False
 
+
+def powerset(iterable):
+    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+def boolean_search(query):
+    tokens = query_tokenizer(query)
+    power_set = powerset(tokens)
+    annotation_id_accum = []
+    for thing in power_set:
+        accum = ''
+        for t in thing:
+            accum = accum + t + ' '
+            print('boolean searching on term:{}:'.format(accum.strip()))
+            if accum.strip() in entity_to_annotation_id:
+                print('!!!!!!!!!!!!! got hit on word :{}'.format(accum.strip()))
+                annotation_id_accum = annotation_id_accum + entity_to_annotation_id[accum.strip()]
+    return annotation_id_accum
+
+
 def find_most_similar(query,n_results, start = None, end = None, relevance_feedback=True):
     """
     finds n most similar annotations to query
@@ -149,6 +174,11 @@ def find_most_similar(query,n_results, start = None, end = None, relevance_feedb
     #find ids of most similar annotations
     annotation_ids = [index_to_id[index] for index in related_docs_indices] #can later be used to find lyric fragment maybe
 
+    annotation_ids = boolean_search(query)
+    print('printing ids')
+    for a in annotation_ids:
+        print(a)
+    sim_scores = [1 for b in annotation_ids]
     # group them by songs
     song_id_to_annotations = {}
     max_sim_sum = 0
