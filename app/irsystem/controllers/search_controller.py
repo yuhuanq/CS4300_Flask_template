@@ -39,7 +39,11 @@ index_to_annotation = {i:v for i, v in enumerate(vectorizer.get_feature_names())
 index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
 
 
-def should_filter(start, end, song_id):
+def should_filter(start, end, artist, song_id):
+    if artist:
+        if not all_songs[song_id]["artists_names"] == artist:
+            return True
+
     if start:
         start = datetime.strptime(start,"%Y-%m-%d")
     if end:
@@ -58,7 +62,7 @@ def should_filter(start, end, song_id):
 
     return False
 
-def find_most_similar(query,n_results, start = None, end = None, relevance_feedback=True):
+def find_most_similar(query,n_results, start = None, end = None, artist = None, relevance_feedback=True):
     """
     finds n most similar annotations to query
     """
@@ -94,7 +98,7 @@ def find_most_similar(query,n_results, start = None, end = None, relevance_feedb
     max_song_page_views = 0
     for annotation_id, sim_score in zip(annotation_ids, sim_scores):
         song_id = annotation_to_song[annotation_id]
-        if sim_score == 0 or should_filter(start, end, song_id):
+        if sim_score == 0 or should_filter(start, end, artist, song_id):
             continue
         if song_id not in song_id_to_annotations:
             song_id_to_annotations[song_id] = []
@@ -163,8 +167,11 @@ def str2bool(v):
 def search():
   query = request.args.get('search')
   start_year = request.args.get('date-start')
-  relevance_feedback = str2bool(request.args.get('relevance_feedback'))
   end_year = request.args.get('date-end')
+  relevance_feedback = str2bool(request.args.get('relevance_feedback'))
+  artist = request.args.get('artist')
+  print(artist)
+
 
   start = 1985
   end = 2019
@@ -189,7 +196,7 @@ def search():
 
     print(start)
     print(end)
-    data = find_most_similar(query, 50, start, end, relevance_feedback)
+    data = find_most_similar(query, 50, start, end, artist, relevance_feedback)
 
 
   stops =  set(stopwords.words('english'))
