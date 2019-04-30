@@ -158,4 +158,27 @@ a.git-link, a.git-link:visited, a.git-link:link, a.git-link:hover, a.git-link:ho
   color:white;
 }
 
+.btn.artist-btn{
+font-family: 'Roboto Slab';
+font-size: 13px;
+color: #494949 !important;
+text-transform: uppercase;
+background: #ffffff;
+padding: 7px;
+border: 2px solid #494949 !important;
+border-radius: 2px;
+display: inline-block;
+margin: 5px;
+}
+
+.btn.artist-btn:hover {
+color: #ffffff !important;
+background: #f6b93b;
+/*border-color: #f6b93b !important;*/
+transition: all 0.3s ease 0s;
+}
+.btn.artist-btn.active{
+  background: #f6b93b;
+}
+
 
