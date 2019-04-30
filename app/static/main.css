@@ -35,7 +35,9 @@ body {
   font-weight: bold;
   font-family: Roboto Slab;
   color:black;
+  letter-spacing: 3px;
 }
+
 a#sonotype:link {
     color: black;
     background-color: transparent;
