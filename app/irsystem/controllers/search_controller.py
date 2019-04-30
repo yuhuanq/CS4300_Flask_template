@@ -40,9 +40,7 @@ index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
 
 
 def should_filter(start, end, artist, song_id):
-    if artist == "All":
-        return False;
-    if artist:
+    if artist and artist != "All":
         if not all_songs[song_id]["artists_names"] == artist:
             return True
 
@@ -167,7 +165,6 @@ def str2bool(v):
 
 @irsystem.route('/', methods=['GET'])
 def search():
-  print(3339483 in all_songs)
   query = request.args.get('search')
   start_year = request.args.get('date-start')
   end_year = request.args.get('date-end')
