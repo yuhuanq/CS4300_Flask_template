@@ -30,6 +30,7 @@ body {
 .logo{
   margin-top:0px;
   font-size: 60px;
+  text-transform: uppercase;
   /*font-family: 'Alegreya', serif;*/
   font-weight: bold;
   font-family: Roboto Slab;
