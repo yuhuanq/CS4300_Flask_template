@@ -12,7 +12,12 @@ import pickle
 import nltk
 from nltk.corpus import stopwords
 import spacy
-#nltk.download('stopwords')
+import dill
+import scipy.sparse as sp
+# from data.data_pickler import annotation_tokenizer
+
+
+nltk.download('stopwords')
 
 
 project_name = "Song Finder"
@@ -24,59 +29,77 @@ song_to_name = {} #song_id to name of song
 annotation_to_text = {} #annotation_id to annotation text
 annotation_to_fragment = {} #annotation_id to lyric fragment
 
-# with open('songs.json') as json_file:
-#     all_songs = json.load(json_file)
-# annotation_to_song = pickle.load( open( "annotation_to_song_p", "rb" ) )
-# song_to_name = pickle.load( open( "song_to_name_p", "rb" ) )
-# annotation_to_text = pickle.load( open( "annotation_to_text_p", "rb" ) )
-# annotation_to_fragment = pickle.load( open( "annotation_to_fragment_p", "rb" ) )
-
-
-# tf_idf = pickle.load(open('tf_idf_p', 'rb'))
-# vectorizer = pickle.load(open('vectorizer_p', "rb"))
+# nlp = spacy.load("en_core_web_sm")
 
 #this should be the same for both the tf_idf creation and the
 #tokenization of queries 
-def annotation_tokenizer(text):
+# def annotation_tokenizer(text):
+#     doc = nlp(text)
+#     for ent in doc.ents:
+#         text = text + " {}".format(ent)
+#     tokenized_annotation = [token.lower_ for token in doc if not token.is_punct]
+#     #maybe make entities lowercase as well?
+#     ents = [ent.text for ent in doc.ents]
+#     tokenized_annotation = tokenized_annotation + ents
+#     return tokenized_annotation
+
+
+#annotation_tokenizer = dill.load(open('data/annotation_tokenizer.dill', 'rb'))
+
+
+# with open('songs.json') as json_file:
+#     all_songs = json.load(json_file)
+annotation_to_song = pickle.load( open( "data/annotation_to_song_p", "rb" ) )
+song_to_name = pickle.load( open( "data/song_to_name_p", "rb" ) )
+annotation_to_text = pickle.load( open( "data/annotation_to_text_p", "rb" ) )
+annotation_to_fragment = pickle.load( open( "data/annotation_to_fragment_p", "rb" ) )
+
+
+tf_idf = pickle.load(open('data/tf_idf_p', 'rb'))
+vectorizer = dill.load(open('data/vectorizer_p.dill', "rb"))
+
+nlp = spacy.load("en_core_web_lg")
+def query_tokenizer(text):
     doc = nlp(text)
     for ent in doc.ents:
         text = text + " {}".format(ent)
     tokenized_annotation = [token.lower_ for token in doc if not token.is_punct]
     #maybe make entities lowercase as well?
     ents = [ent.text for ent in doc.ents]
+    for ent in ents:
+        print("this is an entity!: {}".format(ent))
     tokenized_annotation = tokenized_annotation + ents
+    # print(type(tokenized_annotation))
+    # print(tokenized_annotation)
+    for thing in tokenized_annotation:
+        print(thing)
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     return tokenized_annotation
 
-nlp = spacy.load("en_core_web_lg")
+idfs = pickle.load(open('data/idf_.pickle', 'rb'))
+#thanks http://thiagomarzagao.com/2015/12/08/saving-TfidfVectorizer-without-pickles/
+class MyVectorizer(TfidfVectorizer):
+    # plug our pre-computed IDFs
+    TfidfVectorizer.idf_ = idfs
+
+# instantiate vectorizer
+vectorizer = MyVectorizer(analyzer ='word', tokenizer=query_tokenizer)
+vectorizer._tfidf._idf_diag = sp.spdiags(idfs,
+                                         diags = 0,
+                                         m = len(idfs),
+                                         n = len(idfs))
+vocabulary = pickle.load(open('data/vocabulary.pickle', 'rb'))
+vectorizer.vocabulary_ = vocabulary
+
 with open('songs.json') as song_json:
     all_songs = json.load(song_json)
 
-doc_id_to_ref_id = {} #index of tf_idf to annotation_id
+# index_to_annotation = {i:v for i, v in enumerate(vectorizer.get_feature_names())}
+# index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
+index_to_annotation = pickle.load(open('data/index_to_annotation.pickle', 'rb'))
+index_to_id = pickle.load(open('data/index_to_id.pickle', 'rb'))
 
-ctr = 0
-annotations = []
-for song_id,v in all_songs.items():
-    for r in v['referents']:
-        for a in r['annotations']:
-            doc_id_to_ref_id[ctr] = r['id']
-            annotation_to_song[r['id']] = song_id
-            song_to_name[song_id] = v['full_title']
-            annotation_to_text[a['id']] = r['lyric']
-            ctr +=1
-            annotations.append(a['annotation'])
-  
-
-vectorizer = TfidfVectorizer(analyzer ='word', tokenizer=annotation_tokenizer)
-
-print("starting slow thing")
-tf_idf = vectorizer.fit_transform(annotations)
-print("done with slow thing")
-
-# index_to_annotation = pickle.load(open('doc_id_to_ref_id_p'), 'rb')
-index_to_annotation = {i:v for i, v in enumerate(vectorizer.get_feature_names())}
-index_to_id = {i:v for i, v in enumerate(list(annotation_to_text.keys()))}
-
-
+print('got through to this')
 def should_filter(start, end, song_id):
     if start:
         start = datetime.strptime(start,"%Y-%m-%d")
@@ -198,7 +221,8 @@ def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
 
 @irsystem.route('/', methods=['GET'])
-def search():
+def search():   
+  print("here in search")
   query = request.args.get('search')
   start = request.args.get('date-start')
   relevance_feedback = str2bool(request.args.get('relevance_feedback'))
